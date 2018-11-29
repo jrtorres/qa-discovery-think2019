@@ -108,7 +108,7 @@ We can run the node.js sample application locally to provide our interface that 
 
 1.  To find the Watson Assistant service credentials: from the IBM cloud console, click on the Watson Assistant service instance you created and click on **Service credentials** on the left of the page and then the 'View credentials' drop down. You will need the two fields 'apikey' and 'url'
 
-   ![Service Credentials](readme_images/WA_ServiceCredentials.png)
+      ![Service Credentials](readme_images/WA_ServiceCredentials.png)
 
 1.  Add the service credentials that you obtained for the Watson Assistant service in the `.env` file. The Watson SDK automatically locates the correct environment variables for the `apikey` and `url` credentials.
 
@@ -133,9 +133,7 @@ Ignore the `DISCOVERY*` entries in the `.env` file for now, we will add those la
 
 ### Start the application
 
-1.  Open a terminal and navigate to the `assistant-with-discovery-lab` directory. 
-
-**Optionally**, if you do not have node installed and/or prefer to use docker. Use the following command to start a developer container with the bash prompt and then change the directory in the container into the repository.
+1.  Open a terminal and navigate to the `assistant-with-discovery-lab` directory. **Optionally**, if you do not have node installed and/or prefer to use docker. Use the following command to start a developer container with the bash prompt and then change the directory in the container into the repository.
 
     ```bash
     docker run -it --rm -v "$(pwd):/repo" -p 3000:3000 timrodocker/mydev bash
@@ -183,7 +181,7 @@ In this section, we will modify our Watson Assistant skill to handle out of scop
 
 1.  To add our second response field **Click the 'Add response'** link.
 
-   ![Out Of Scope Dialog Node Add Response](readme_images/WA_DialogNodeMRAddResponse.png)
+      ![Out Of Scope Dialog Node Add Response](readme_images/WA_DialogNodeMRAddResponse.png)
 
 1.  In the dialog node editor, for the second response, under the 'If assistant recognizes' column, enter: `intents[0].confidence>0.5`. Instead of entering a text response, we need to set the action flag. **Click on the gear icon** on the right side of the response field.  
 
@@ -253,27 +251,27 @@ Within Watson Discovery, we are going to add content that can be used to address
 
 1.   In the center of the collection landing page, select **or browse from computer** link to start uploading content.  
 
-    ![Watson Discovery Start Upload](readme_images/WDS_StartContentUpload.png)
+      ![Watson Discovery Start Upload](readme_images/WDS_StartContentUpload.png)
 
 1.   For the purpose of this lab, we have provided a set of documents already in JSON format that are in the data/discovery_content directory of the repository. From the file section dialog, find the directory with these files and select all the JSON files and **click on the 'Open'** button.  
 
-    ![Watson Discovery Select Content to Upload](readme_images/WDS_UploadContentSelection.png)
+      ![Watson Discovery Select Content to Upload](readme_images/WDS_UploadContentSelection.png)
 
 1.   As the content is uploading, you should be taken back to the collection landing page. There should be no errors indicated on the landing page and an indicator next to the document count to show that content is still processing. 
 
-    ![Watson Discovery Select Content to Upload](readme_images/WDS_UploadContentInProgress.png)
+      ![Watson Discovery Select Content to Upload](readme_images/WDS_UploadContentInProgress.png)
 
 1.   Once all the content is uploaded (the progress indicator next to document count disappears), feel free to run searches on the indexed content. **Click on the Build Queries** icon on the left side of the page.  
 
-    ![Watson Discovery Build Queries 1](readme_images/WDS_BuildQueryIcon.png)
+      ![Watson Discovery Build Queries 1](readme_images/WDS_BuildQueryIcon.png)
 
 1.   **Click on the 'Search for documents'** section.  
 
-    ![Watson Discovery Search Query](readme_images/WDS_BuildQuerySearch.png)
+      ![Watson Discovery Search Query](readme_images/WDS_BuildQuerySearch.png)
 
 1.   Enter a sample query / question (i.e "tire pressure") as a natural langauge query. Discovery will search the indexed content for results. On the right hand panel, you can see the top results, as well as passages (smaller excerpts from the content) that are relevant to the query.
 
-    ![Watson Discovery Search Results](readme_images/WDS_QueryResults.png)
+      ![Watson Discovery Search Results](readme_images/WDS_QueryResults.png)
 
 
 ## Part 3: Edit the application
@@ -303,7 +301,7 @@ Within Watson Discovery, we are going to add content that can be used to address
     Save the `.env` file
 
 ### Add the code
-Open the `app.js` file and scroll down until you see
+1. Open the `app.js` file and scroll down until you see
 
 ```
       /////////////////////////////////////////////
