@@ -32,13 +32,7 @@ var assistant = new AssistantV1({
   version: '2018-09-20'
 });
 
-var discovery = new DiscoveryV1({
-  version: '2018-10-15'
-});
-
 var call_discovery_flag_name = 'call_discovery';
-var discovery_environment_id = process.env.DISCOVERY_ENVIRONMENT_ID;
-var discovery_collection_id = process.env.DISCOVERY_COLLECTION_ID;
 
 // Endpoint to be call from the client side
 app.post('/api/message', function (req, res) {
@@ -62,69 +56,91 @@ app.post('/api/message', function (req, res) {
     if (err) {
       return res.status(err.code || 500).json(err);
     }
-    //return res.json(updateMessage(payload, data));
 
     if (data.output && data.output.action) {
       var outaction = JSON.stringify(data.output.action);
-      if (outaction.indexOf(call_discovery_flag_name) > -1) {
-        if (!discovery_environment_id || !discovery_collection_id) {
-          console.log("Discovery call cannot be made without a collection id or environment id.");
-          return res.json(updateMessage(payload, data));
-        }
-        else {
-          var discovery_payload = {
-            environment_id: discovery_environment_id,
-            collection_id: discovery_collection_id,
-            //collection_ids: discovery_collection_ids,
-            natural_language_query: data.input.text,
-            passages: true,
-            count: 5
-          };
 
-          //discovery.federatedQuery(discovery_payload, function (error, discovery_response) {
-          discovery.query(discovery_payload, function (error, discovery_response) {
-            if (error) {
-              console.log("There was a problem with the WDS call: " + error);
-              return res.status(error.code || 500).json(error);
-            }
 
-            var resp = data;
-
-            // In the following option, we return top 3 passages instead of complete documents
-            var numResults = discovery_response.passages.length;
-            //var numResults = discovery_response.results.length;
-            console.log("Number of responses - " + numResults);
-            var nResponses = 0;
-            if (numResults > 3) {
-              nResponses = 3;
-            } else {
-              nResponses = numResults;
-            }
-
-            resp.output.text = "";
-            for (var i = 0; i < nResponses; i++) {
-              resp.output.text = resp.output.text + "[" + discovery_response.passages[i].document_id + "]<br>" + discovery_response.passages[i].passage_text + "<br><br><hr><br><br>";
-            }
-
-            //New output uses a generic array to capture responses.
-            resp.output.generic.forEach(function (gen) {
-              if (gen.response_type === 'text') 
-                gen.text= resp.output.text;
-            });
-
-            return res.json(updateMessage(payload, resp));
-          });
-        }
-      } else {
-        console.log("Output contains a non-discovery action.");
+      /////////////////////////////////////////////
+      // UNCOMMENT THESE LINES TO CALL DISCOVERY //
+      /////////////////////////////////////////////
+      // if (outaction.indexOf(call_discovery_flag_name) > -1) {
+      //   return callDiscovery(data, res, payload);
+      // } else {
         return res.json(data);
-      }
+      // }
+
+
     } else {
       console.log("Output contains no action.");
       return res.json(data);
     }
   });
 });
+
+/**
+ * 
+ * @param {object} data      response from Watson Assistant
+ * @param {object} res       The response back to the user
+ * @param {object} payload   The payload from Watson Assistant
+ * @return {Object}      The response with the updated message
+ */
+function callDiscovery(data, res, payload) {
+
+  var discovery = new DiscoveryV1({
+    version: '2018-10-15'
+  });
+
+  var discovery_environment_id = process.env.DISCOVERY_ENVIRONMENT_ID;
+  var discovery_collection_id = process.env.DISCOVERY_COLLECTION_ID;
+
+  if (!discovery_environment_id || !discovery_collection_id) {
+    console.log("Discovery call cannot be made without a collection id or environment id.");
+    return res.json(updateMessage(payload, data));
+  }
+  else {
+    var discovery_payload = {
+      environment_id: discovery_environment_id,
+      collection_id: discovery_collection_id,
+      //collection_ids: discovery_collection_ids,
+      natural_language_query: data.input.text,
+      passages: true,
+      count: 5
+    };
+
+    discovery.query(discovery_payload, function (error, discovery_response) {
+      if (error) {
+        console.log("There was a problem with the WDS call: " + error);
+        return res.status(error.code || 500).json(error);
+      }
+
+      var resp = data;
+
+      // In the following option, we return top 3 passages instead of complete documents
+      var numResults = discovery_response.passages.length;
+      console.log("Number of responses - " + numResults);
+      var nResponses = 0;
+      if (numResults > 3) {
+        nResponses = 3;
+      } else {
+        nResponses = numResults;
+      }
+
+      resp.output.text = "";
+      for (var i = 0; i < nResponses; i++) {
+        resp.output.text = resp.output.text + "[" + discovery_response.passages[i].document_id + "]<br>" + discovery_response.passages[i].passage_text + "<br><br><hr><br><br>";
+      }
+
+      //New output uses a generic array to capture responses.
+      resp.output.generic.forEach(function (gen) {
+        if (gen.response_type === 'text') 
+          gen.text= resp.output.text;
+      });
+
+      return res.json(updateMessage(payload, resp));
+    });
+  }
+ }
 
 /**
  * Updates the response text using the intent confidence
