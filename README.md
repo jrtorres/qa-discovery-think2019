@@ -22,11 +22,16 @@ This application is based on the [Watson Assistant Simple application](https://g
 
 ## Steps
 
+Starting with Watson Assistant
 1. Create an instance of the Watson Assistant Service
 1. Import the pre-built dialog skill / workspace.
+1. Run the Node.js application to test
+
+Then adding Discovery
 1. Add an action in the dialog.
 1. Create an  instance of the Watson Discovery Service
 1. Import the knowledge base content.
+1. Add Node.js code to call Watson Discovery
 1. Run the Node.js application to test.
 
 ## Prerequisites
@@ -56,123 +61,41 @@ Training a chatbot is like training a human agent. You will train the chatbot wi
 1.  **Select the AI category** on the left, under 'All Categories'.
 
 1.  **Select the Watson Assistant** service tile.  
+
     ![Watson Assistant Service Tile](readme_images/WA_Tile.png)
 
 1.  Click **Create** (*Leave default options for Lite plan, region service name, etc*).
 
 1.  Click on the  **Launch tool** button to launch into the Watson Assistant tooling.  
+
     ![Watson Assistant Launch Tool](readme_images/WA_LaunchTool.png)
 
-1.  This is the Watson Assistant tooling where you can create assistants, skills and and setup different chatbots applications. We'll be importing a pre-built skill. **Click on 'Skills'** on the top left, and then on the **Create new** button.  
+1.  This is the Watson Assistant tooling where you can create assistants, skills and and setup different chatbots applications. We'll be importing a pre-built skill. **Click on 'Skills'** on the top left, and then on the **Create new** button. 
+
     ![Watson Assistant New Skill](readme_images/WA_CreateNewSkill.png)
 
-1.  **Click on 'Import Skill'** and then on the **Choose JSON File** button.  
+1.  **Click on 'Import Skill'** and then on the **Choose JSON File** button. 
+
     ![Watson Assistant Import Skill](readme_images/WA_ImportSkill.png)
 
 1.  Find the workspace [JSON file](data/assistant_skills/car_dashboard_base.json) downloaded from this repository on your local machine and **Click the 'Import'** button (make sure the **Everything** radio button is selected to import intents, entities and dialog).  
+
     ![Watson Assistant Import Skill Complete](readme_images/WA_ImportSkillFinish.png)
 
 1.  You will be redirected into a page with four tabs, Intents, Entities, Dialog, and Content Catalog. For the purposes of this lab, the skill is fairly complete.
 
 1.  Go ahead and test the chatbot as it is. Click on the **Try it** button on the top right of the page. *If there is a purple banner on the Try It Out panel, you will have to wait until training is completed*.  Enter some text in the panel to interact with the assistant (i.e 'Play some music').  
+
     ![Watson Assistant Initial Test](readme_images/WA_TryItOut1.png)
 
-## Part 2: Add Client Action Flag To Dialog
+1. The Watson Assistant we have built is useful in answering many users requests/questions such as turning on the music. However, there are some requests that will be out of scope for Watson Assistant. Try asking "checking tire pressure". 
 
-The user's questsions/requests may at times be relevant but out of scope for the Watson Assistant (or not practical to resolve with only Watson Assistant). These are questions that may not be frequently asked, may have multiple answers, or whose answers might exist in a knowledge base. In these cases, combining Watson Assisatant with an information retrieval solution can be used to provide the answers to the user. In this section, we will modify our Watson Assistant skill to handle these types of questions by triggering the orchestrating application to call the Watson Discovery service. For the purpose of this lab, we have already provided an intent with sample questions that are out of scope, so we will just modify the Dialog to create a client action flag.
+![Watson Assistant Initial Test](readme_images/WA_TryItOut3.png)
 
-1.  **Click on the Dialog tab** in the top menu bar.
-
-1.  **Click on the 'Add node'** button. This should add a new dialog node near the bottom of the dialog tree and open the dialog node editor. In the dialog node editor, enter a node name (i.e. 'Out of Scope'). For the input triggers, have it set to the intent  **#out_of_scope** (make sure to include the # symbol).  
-    ![Out Of Scope Dialog Node](readme_images/WA_DialogNodeInput.png)
-
-1.  Then click the **Customize** link next to the name and enable Multipe responses for the node and click the **Apply** button.  
-    ![Out of Scope Node Enable Multiple Response](readme_images/WA_DialogNodeEnableMR.png)
-
-1.  We are only going to set the client side action (i.e the flag to call Watson Discovery) when Watson Assistant is confident it has received an out of scope question from the user. To accomplish this, we will have one response for questions that are out of scope but are under a specific confidence threshold and another with the action flag when above the confidence threshold. In the dialog node editor, for the first response, under the 'If assistant recognizes' column, enter: `intents[0].confidence<0.51` and under the 'Respond with' column, enter: `Sorry I haven't learned answers to questions like this.`. This is the response the Watson assistant will use if the intent (out_of_scope in this case ) is the top one identified with a confidence less than 50%.  
-    ![Out Of Scope Dialog Node Response 1](readme_images/WA_DialogNodeMR1.png)
-
-1.  To add our second response field **Click the 'Add respnse'** link.  
-   ![Out Of Scope Dialog Node Add Response](readme_images/WA_DialogNodeMRAddResponse.png)
-
-1.  In the dialog node editor, for the second response, under the 'If assistant recognizes' column, enter: `intents[0].confidence>0.5`. Instead of entering a text response, we need to set the action flag. **Click on the gear icon** on the right side of the response field.  
-    ![Out Of Scope Dialog Node Response 2](readme_images/WA_DialogNodeMR2.png)
-
-1.  In the response configuration window. **Click on the three stacked dot** icon on the right side and select the 'Open JSON editor' option from the menu.  
-    ![Out Of Scope Dialog Node Open JSON](readme_images/WA_DialogNodeOpenJSON.png)
-
-1.  Replace the contents in the window with the following JSON object. This snippet is setting a flag called 'call_discovery' in the output section of the JSON response from Watson Assistant, which our application will look for to know when a call to Watson Discovery is necessary:  
-     ```JSON
-     {
-     "output": {
-        "text": {
-           "values": [
-              "That question is out of scope for this application, take a look at the Watson Assistant Enhanced application to handle questions like these."
-           ],
-        "selection_policy": "sequential"
-        },
-        "action": {
-           "call_discovery": ""
-        }
-     }
-    }
-     ```
-
-1.  **Click on the Save** button.  
-    ![Out of Scope Node JSON Resonse](readme_images/WA_DialogNodeMRJSONResponse.png)
-
-1.  Your dialog node should look as follows:  
-    ![Out of Scope Node Final](readme_images/WA_DialogNodeFinal.png)
-
-1.  Use the 'Try it out' panel to test your Watson Assistant chat bot. Click on the **Try it** icon in the top-right corner of the tooling.  
-    ![Watson Assistant Final Test](readme_images/WA_TryItOut2.png)
+We will use Watson Discovery to handle these out-of-scope requests later in this lab.
 
 
-# Configure Watson Discovery
-
-Within Watson Discovery, we are going to add content that can be used to address some of the user questions that are out of scope for the Watson Assistant. In order to do this we will set up a collection and index a set of provided documents.
-
-1.  Go to the IBM Cloud Console - (https://console.bluemix.net) and log in.
-
-1.  **Click on the Catalog** link in the top-left corner of the IBM Cloud dashboard.
-
-1.  **Select the AI category** on the left, under 'All Categories'.
-
-1.  **Select the Watson Discovery** service tile.  
-    ![Watson Discovery Service Tile](readme_images/WDS_CreateTile.png)
-
-1.  Click **Create** (*Leave default options for Lite plan, region service name, etc*)
-
-1.  Click on the  **Launch tool** button to launch into the Watson Discovery tooling.  
-    ![Watson Discovery Launch Tool](readme_images/WDS_LaunchTool.png)
-
-1.  On the landing page, you have the option to use pre-enriched and ingested content that comes out of the box with discovery (news related content source) or to add your own content. **Click the 'Upload your own data'** button on the top left of the page.  If you are presented with a message about Lite Plan being for trial & experimentation, go ahead and click on 'Set up with current plan' and click 'Continue'. This message is to inform you that Lite plans are not intended for production usage scenarios. At this point, the environment and back end resources are being set up for your content.  
-    ![Watson Discovery Upload Own Data](readme_images/WDS_CreateCollection.png)
-
-1.  In the collection details dialog window, give your collection a name (i.e 'LongTailContent') and **click the Create** button. You will use the default configuration for this lab. In other scenarios, you might create a custom configuration that defines how content is converted, how it is enriched and any other processing before it is indexed. The content we will be uploading is already in JSON format and we are not going to be using the enrichments, so the default configuration will work well for this use case.  
-    ![Watson Discovery Create Collection](readme_images/WDS_CollectionName.png)
-
-1.   In the center of the collection landing page, select **or browse from computer** link to start uploading content.  
-    ![Watson Discovery Start Upload](readme_images/WDS_StartContentUpload.png)
-
-1.   For the purpose of this lab, we have provided a set of documents already in JSON format that are in the data/discovery_content directory of the repository. From the file section dialog, find the directory with these files and select all the JSON files and **click on the 'Open'** button.  
-    ![Watson Discovery Select Content to Upload](readme_images/WDS_UploadContentSelection.png)
-
-1.   As the content is uploading, you should be taken back to the collection landing page. There should be no errors indicated on the landing page and an indicator next to the document count to show that content is still processing.  
-    ![Watson Discovery Select Content to Upload](readme_images/WDS_UploadContentInProgress.png)
-
-1.   Once all the content is uploaded (the progress indicator next to document count disappears), feel free to run searches on the indexed content. **Click on the Build Queries** icon on the left side of the page.  
-    ![Watson Discovery Build Queries 1](readme_images/WDS_BuildQueryIcon.png)
-
-1.   **Click on the 'Search for documents'** section.  
-    ![Watson Discovery Search Query](readme_images/WDS_BuildQuerySearch.png)
-
-1.   Enter a sample query / question (i.e "tire pressure") as a natural langauge query. Discovery will search the indexed content for results. On the right hand panel, you can see the top results, as well as passages (smaller excerpts from the content) that are relevant to the query.
-    ![Watson Discovery Search Results](readme_images/WDS_QueryResults.png)
-
-
-# Run the Application
-
+## Part 2: Test with the Node.js Application
 ## Run locally
 
 We can run the node.js sample application locally to provide our interface that calls Watson Assistant & Watson Discovery. Before we can start the application, we will need to gather some information to connect to the services. Your running the application you downloaded or cloned locally, so all terminal commands assume you are in the main working directory.
@@ -184,6 +107,7 @@ We can run the node.js sample application locally to provide our interface that 
 1.  Using a text editor make a copy of the `.env.example` file from the main working directory and call it `.env` (note the leading dot).
 
 1.  To find the Watson Assistant service credentials: from the IBM cloud console, click on the Watson Assistant service instance you created and click on **Service credentials** on the left of the page and then the 'View credentials' drop down. You will need the two fields 'apikey' and 'url'
+
    ![Service Credentials](readme_images/WA_ServiceCredentials.png)
 
 1.  Add the service credentials that you obtained for the Watson Assistant service in the `.env` file. The Watson SDK automatically locates the correct environment variables for the `apikey` and `url` credentials.
@@ -196,6 +120,7 @@ We can run the node.js sample application locally to provide our interface that 
     Save the `.env` file
 
 1.  To interact with the correct skill, you will also need the unique identifier for your skill.  You can find the workspace ID from the Watson Assistant tooling. From the main Skills page, **Click on the three stacked dots** on the top right of the skill you created/imported. Then **click on the 'View API Details'** option in the menu.
+
     ![Workspace ID](readme_images/WA_WorkspaceID.png)  
 
     Copy the **Workspace ID** value from this page and add the id to the `WORKSPACE_ID` property in the .env file:
@@ -204,26 +129,7 @@ We can run the node.js sample application locally to provide our interface that 
     WORKSPACE_ID=522XXXXXXXXXXXXXXXXXX
     ```
 
-1.  To find the Watson Discovery service credentials: from the IBM cloud console, click on the Watson Discovery service instance you created and click on **Service credentials** on the left of the page and then the 'View credentials' drop down. You will need to copy the two fields 'apikey' and 'url' into the `.env` file. The Watson SDK automatically locates the correct environment variables for the `apikey` and `url` credentials.
-
-    ```
-    DISCOVERY_IAM_APIKEY=caXXXXXXXXXXXXXXXXX
-    DISCOVERY_URL=https://gateway.watsonplatform.net/assistant/api
-    ```
-
-    Save the `.env` file
-
-1.  To interact with the collection we created, you will need to gather a couple of unique identifiers (an environment ID and a collection ID).  You can find these IDs from the Watson Discovery tooling. From the desirec collection landing page, **Click on the 'Use this collection in API'** link on the 'Collection Info' section of the page.
-    ![Collection IDs](readme_images/WDS_CollectionIds.png)  
-
-    Copy the **Collection Id** and **Environment Id** value from this page and add the ids to the .env file as shown:
-
-    ```
-    DISCOVERY_COLLECTION_ID=4d0aXXXXXXXXXXXXXXXXXXX
-    DISCOVERY_ENVIRONMENT_ID=059XXXXXXXXXXXXXXXXXXX
-    ```
-
-    Save the `.env` file
+Ignore the `DISCOVERY*` entries in the `.env` file for now, we will add those later.
 
 ### Start the application
 
@@ -246,7 +152,189 @@ We can run the node.js sample application locally to provide our interface that 
     npm start
     ```
 
-1.  View the application in a browser at `localhost:3000` and interact with the chatbot.
+1.  View the application in a browser at `localhost:3000` and interact with the chatbot. Try asking the same questions as you did early such as "play some music" or "checking tire pressure".
+
+    ![Nodejs Application](readme_images/AppTest2.png)  
+    
+# Adding Watson Discovery
+
+The user's questions/requests may at times be relevant but out of scope for the Watson Assistant (or not practical to resolve with only Watson Assistant). These are questions that may not be frequently asked, may have multiple answers, or whose answers might exist in a knowledge base. In these cases, combining Watson Assistant and the information retrieval capabilities of Watson Discovery can be used to provide the answers to the user. 
+
+
+## Part 1: Add Client Action Flag To Dialog
+
+In this section, we will modify our Watson Assistant skill to handle out of scope questions by triggering the orchestrating application to call the Watson Discovery service. For the purpose of this lab, we have already provided an intent with sample questions that are out of scope, so we will just modify the Dialog to create a client action flag.
+
+1.  **Click on the Dialog tab** in the top menu bar.
+
+1.  **Click on the 'Add node'** button. This should add a new dialog node near the bottom of the dialog tree and open the dialog node editor. In the dialog node editor, enter a node name (i.e. 'Out of Scope'). For the input triggers, have it set to the intent  **#out_of_scope** (make sure to include the # symbol). 
+
+    ![Out Of Scope Dialog Node](readme_images/WA_DialogNodeInput.png)
+
+1.  Then click the **Customize** link next to the name and enable Multipe responses for the node and click the **Apply** button.  
+
+    ![Out of Scope Node Enable Multiple Response](readme_images/WA_DialogNodeEnableMR.png)
+
+1.  We are only going to set the client side action (i.e the flag to call Watson Discovery) when Watson Assistant is confident it has received an out of scope question from the user. To accomplish this, we will have one response for questions that are out of scope but are under a specific confidence threshold and another with the action flag when above the confidence threshold. In the dialog node editor, for the first response, under the 'If assistant recognizes' column, enter: `intents[0].confidence<0.51` and under the 'Respond with' column, enter: `Sorry I haven't learned answers to questions like this.`. This is the response the Watson assistant will use if the intent (out_of_scope in this case ) is the top one identified with a confidence less than 50%.  
+
+    ![Out Of Scope Dialog Node Response 1](readme_images/WA_DialogNodeMR1.png)
+
+1.  To add our second response field **Click the 'Add response'** link.
+
+   ![Out Of Scope Dialog Node Add Response](readme_images/WA_DialogNodeMRAddResponse.png)
+
+1.  In the dialog node editor, for the second response, under the 'If assistant recognizes' column, enter: `intents[0].confidence>0.5`. Instead of entering a text response, we need to set the action flag. **Click on the gear icon** on the right side of the response field.  
+
+    ![Out Of Scope Dialog Node Response 2](readme_images/WA_DialogNodeMR2.png)
+
+1.  In the response configuration window. **Click on the three stacked dot** icon on the right side and select the 'Open JSON editor' option from the menu.
+
+    ![Out Of Scope Dialog Node Open JSON](readme_images/WA_DialogNodeOpenJSON.png)
+
+1.  Replace the contents in the window with the following JSON object. This snippet is setting a flag called 'call_discovery' in the output section of the JSON response from Watson Assistant, which our application will look for to know when a call to Watson Discovery is necessary:  
+     ```JSON
+     {
+     "output": {
+        "text": {
+           "values": [
+              "That question is out of scope for this application, take a look at the Watson Assistant Enhanced application to handle questions like these."
+           ],
+        "selection_policy": "sequential"
+        },
+        "action": {
+           "call_discovery": ""
+        }
+     }
+    }
+     ```
+
+1.  **Click on the Save** button.  
+
+    ![Out of Scope Node JSON Resonse](readme_images/WA_DialogNodeMRJSONResponse.png)
+
+1.  Your dialog node should look as follows:  
+
+    ![Out of Scope Node Final](readme_images/WA_DialogNodeFinal.png)
+
+1.  Use the 'Try it out' panel to test your Watson Assistant chat bot. Click on the **Try it** icon in the top-right corner of the tooling. 
+
+    ![Watson Assistant Final Test](readme_images/WA_TryItOut2.png)
+
+
+## Part 2: Configure Watson Discovery
+
+Within Watson Discovery, we are going to add content that can be used to address some of the user questions that are out of scope for the Watson Assistant. In order to do this we will set up a collection and index a set of provided documents.
+
+1.  Go to the IBM Cloud Console - (https://console.bluemix.net) and log in.
+
+1.  **Click on the Catalog** link in the top-left corner of the IBM Cloud dashboard.
+
+1.  **Select the AI category** on the left, under 'All Categories'.
+
+1.  **Select the Watson Discovery** service tile.  
+
+    ![Watson Discovery Service Tile](readme_images/WDS_CreateTile.png)
+
+1.  Click **Create** (*Leave default options for Lite plan, region service name, etc*)
+
+1.  Click on the  **Launch tool** button to launch into the Watson Discovery tooling.  
+
+    ![Watson Discovery Launch Tool](readme_images/WDS_LaunchTool.png)
+
+1.  On the landing page, you have the option to use pre-enriched and ingested content that comes out of the box with discovery (news related content source) or to add your own content. **Click the 'Upload your own data'** button on the top left of the page.  If you are presented with a message about Lite Plan being for trial & experimentation, go ahead and click on 'Set up with current plan' and click 'Continue'. This message is to inform you that Lite plans are not intended for production usage scenarios. At this point, the environment and back end resources are being set up for your content.  
+
+    ![Watson Discovery Upload Own Data](readme_images/WDS_CreateCollection.png)
+
+1.  In the collection details dialog window, give your collection a name (i.e 'LongTailContent') and **click the Create** button. You will use the default configuration for this lab. In other scenarios, you might create a custom configuration that defines how content is converted, how it is enriched and any other processing before it is indexed. The content we will be uploading is already in JSON format and we are not going to be using the enrichments, so the default configuration will work well for this use case.  
+
+    ![Watson Discovery Create Collection](readme_images/WDS_CollectionName.png)
+
+1.   In the center of the collection landing page, select **or browse from computer** link to start uploading content.  
+
+    ![Watson Discovery Start Upload](readme_images/WDS_StartContentUpload.png)
+
+1.   For the purpose of this lab, we have provided a set of documents already in JSON format that are in the data/discovery_content directory of the repository. From the file section dialog, find the directory with these files and select all the JSON files and **click on the 'Open'** button.  
+
+    ![Watson Discovery Select Content to Upload](readme_images/WDS_UploadContentSelection.png)
+
+1.   As the content is uploading, you should be taken back to the collection landing page. There should be no errors indicated on the landing page and an indicator next to the document count to show that content is still processing. 
+
+    ![Watson Discovery Select Content to Upload](readme_images/WDS_UploadContentInProgress.png)
+
+1.   Once all the content is uploaded (the progress indicator next to document count disappears), feel free to run searches on the indexed content. **Click on the Build Queries** icon on the left side of the page.  
+
+    ![Watson Discovery Build Queries 1](readme_images/WDS_BuildQueryIcon.png)
+
+1.   **Click on the 'Search for documents'** section.  
+
+    ![Watson Discovery Search Query](readme_images/WDS_BuildQuerySearch.png)
+
+1.   Enter a sample query / question (i.e "tire pressure") as a natural langauge query. Discovery will search the indexed content for results. On the right hand panel, you can see the top results, as well as passages (smaller excerpts from the content) that are relevant to the query.
+
+    ![Watson Discovery Search Results](readme_images/WDS_QueryResults.png)
+
+
+## Part 3: Edit the application
+
+### Add IBM Watson Discovery service credentials to .env file
+
+1.  To find the Watson Discovery service credentials: from the IBM cloud console, click on the Watson Discovery service instance you created and click on **Service credentials** on the left of the page and then the 'View credentials' drop down. You will need to copy the two fields 'apikey' and 'url' into the `.env` file. The Watson SDK automatically locates the correct environment variables for the `apikey` and `url` credentials.
+
+    ```
+    DISCOVERY_IAM_APIKEY=caXXXXXXXXXXXXXXXXX
+    DISCOVERY_URL=https://gateway.watsonplatform.net/assistant/api
+    ```
+
+    Save the `.env` file
+
+1.  To interact with the collection we created, you will need to gather a couple of unique identifiers (an environment ID and a collection ID).  You can find these IDs from the Watson Discovery tooling. From the desired collection landing page, **Click on the 'Use this collection in API'** link on the 'Collection Info' section of the page.
+
+    ![Collection IDs](readme_images/WDS_CollectionIds.png)  
+
+    Copy the **Collection Id** and **Environment Id** value from this page and add the ids to the .env file as shown:
+
+    ```
+    DISCOVERY_COLLECTION_ID=4d0aXXXXXXXXXXXXXXXXXXX
+    DISCOVERY_ENVIRONMENT_ID=059XXXXXXXXXXXXXXXXXXX
+    ```
+
+    Save the `.env` file
+
+### Add the code
+Open the `app.js` file and scroll down until you see
+
+```
+      /////////////////////////////////////////////
+      // UNCOMMENT THESE LINES TO CALL DISCOVERY //
+      /////////////////////////////////////////////
+      // if (outaction.indexOf(call_discovery_flag_name) > -1) {
+      //   return callDiscovery(data, res, payload);
+      // } else {
+        return res.json(data);
+      // }
+```
+Uncomment the 4 lines total to add the logic to call discovery upon finding the flag in the response from Watson Assistant
+
+## Part 4: Retest the Application
+
+1.  Use the same commands as before to re-run the application with your code changes.
+#### Using Node
+
+```
+npm start
+```
+
+#### Using Docker
+
+```bash
+docker run -it --rm -v "$(pwd):/repo" -p 3000:3000 timrodocker/mydev bash
+cd repo
+```
+
+2.  View the application in a browser at `localhost:3000` and interact with the chatbot.
+
+This time when you ask the question "checking tire pressure". You should see the response from Watson Discovery.
+
     ![Nodejs Application](readme_images/AppTest.png)  
 
 
