@@ -1,10 +1,6 @@
 # Overview
 
-Watson Assistant service combines machine learning, natural language understanding, and integrated dialog tools to create conversation flows between your apps and your users. 
-
-#############################################################
-WATSON DISCOVERY DESCRIPTION..........
-#############################################################
+IBM Watson Assistant service combines machine learning, natural language understanding, and integrated dialog tools to create conversation flows between your apps and your users. In many cases, building a conversational or questions & answer solution can be accomplished primarily using Watson Assistant. However, there will be scenarios where a question & answer solution can not be modeled using only Watson Assistant, either because the domain is large or the questions are complex. In these scenarios, we can combine Watson Assistant and IBM Watson Disovery service to create a solution. Watson Discovery service enables developers to extract insights from large amounts of structured and unstructured data. Allowing users to unlock hidden value in data, to find answers, monitor trends and surface patterns. In these solutions, Watson Assistant provides reasoning strategies that focus on the language and context of the question to answer simple questions, while Watson Discovery provides reasoning strategies that focus on identifying the most appropriate answer for complex questions using the context of the entire corpus.
 
 In this lab, you will import and modify a Watson Assistant skill, Upload content to a Watson Discovery instance, and then integrate the two components using a node.js application.
 
@@ -226,33 +222,35 @@ We can run the node.js sample application locally to provide our interface that 
 
 ### Start the application
 
-1.  From a terminal in the `watson-assistant-lab` directory, start a developer container with the bash prompt and then change the directory in the container into the repository.
+1.  Open a terminal and navigate to the `assistant-with-discovery-lab` directory. **Optionally**, if you do not have node installed and/or prefer to use docker. Use the following command to start a developer container with the bash prompt and then change the directory in the container into the repository.
 
     ```bash
     docker run -it --rm -v "$(pwd):/repo" -p 3000:3000 timrodocker/mydev bash
     cd repo
     ```
 
-1.  Install the dependencies
+1.  Install the applications node dependencies by running the following command:
 
     ```
     npm install
     ```
 
-2.  Run the application
+1.  Start the application using the following command:
 
     ```
     npm start
     ```
 
-3.  View the application in a browser at `localhost:3000`
+1.  View the application in a browser at `localhost:3000` and interact with the chatbot.
+    ![Nodejs Application](readme_images/AppTest.png)  
+
 
 ### Running on IBM Cloud
 You could also deploy the application to to IBM Cloud as a Cloud Foundry Application
 
 1.  Using a text editor update the *manifest.yml* file. Change the **name** field to something unique. For example, `- name: my-app-name`.
 
-2.  Start the developer container and change into the respository folder:
+2.  Open a terminal and navigate to the `assistant-with-discovery-lab` directory. **Optionally**, if you do not have node installed and/or prefer to use docker. Use the following command to start a developer container with the bash prompt and then change the directory in the container into the repository.
 
     ```bash
     docker run -it --rm -v "$(pwd):/repo" -p 5000:5000 timrodocker/mydev bash

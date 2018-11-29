@@ -36,6 +36,10 @@ var discovery = new DiscoveryV1({
   version: '2018-10-15'
 });
 
+var call_discovery_flag_name = 'call_discovery';
+var discovery_environment_id = process.env.DISCOVERY_ENVIRONMENT_ID;
+var discovery_collection_id = process.env.DISCOVERY_COLLECTION_ID;
+
 // Endpoint to be call from the client side
 app.post('/api/message', function (req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
@@ -53,18 +57,6 @@ app.post('/api/message', function (req, res) {
     alternate_intents: true
   };
 
-  var call_discovery_flag_name = 'call_discovery';
-  var discovery_environment_id = process.env.DISCOVERY_ENVIRONMENT_ID || '<discovery-environment-id>';
-  var discovery_collection_id = process.env.DISCOVERY_COLLECTION_ID || '<discovery-collection-id>';
-  //var discovery_collection_ids = process.env.DISCOVERY_COLLECTION_IDS
-  //if (!discovery_environment_id || !discovery_collection_id) {
-  //  return res.json({
-  //    'output': {
-  //      'text': 'The app requires a DISCOVERY instance to be setup and documents ingest into a collection. Need to provide the environment id for the Discovery instance and the collection id which includes the corpus of documents.'
-  //    }
-  //  });
-  //}
-
   // Send the input to the assistant service
   assistant.message(payload, function (err, data) {
     if (err) {
@@ -73,74 +65,62 @@ app.post('/api/message', function (req, res) {
     //return res.json(updateMessage(payload, data));
 
     if (data.output && data.output.action) {
-      console.log('Have an action to call....')
       var outaction = JSON.stringify(data.output.action);
       if (outaction.indexOf(call_discovery_flag_name) > -1) {
-        console.log('call to discovery....')
+        if (!discovery_environment_id || !discovery_collection_id) {
+          console.log("Discovery call cannot be made without a collection id or environment id.");
+          return res.json(updateMessage(payload, data));
+        }
+        else {
+          var discovery_payload = {
+            environment_id: discovery_environment_id,
+            collection_id: discovery_collection_id,
+            //collection_ids: discovery_collection_ids,
+            natural_language_query: data.input.text,
+            passages: true,
+            count: 5
+          };
 
-        var user_input = data.input.text;
-        var discovery_payload = {
-          environment_id: discovery_environment_id,
-          collection_id: discovery_collection_id,
-          //collection_ids: discovery_collection_ids,
-          natural_language_query: user_input,
-          passages: true
-        };
+          //discovery.federatedQuery(discovery_payload, function (error, discovery_response) {
+          discovery.query(discovery_payload, function (error, discovery_response) {
+            if (error) {
+              console.log("There was a problem with the WDS call: " + error);
+              return res.status(error.code || 500).json(error);
+            }
 
-        console.log("------------------------------------------------------------------------------");
-        console.log(discovery_payload);
-        console.log("------------------------------------------------------------------------------");
+            var resp = data;
 
-        //discovery.federatedQuery(discovery_payload, function (error, discovery_response) {
-        discovery.query(discovery_payload, function (error, discovery_response) {
-          if (error) {
-            console.log("There was a problem with the wds call....")
-            return res.status(error.code || 500).json(error);
-          }
-          //Capture original conversation message to add discovery responses.
-          var resp = data;
+            // In the following option, we return top 3 passages instead of complete documents
+            var numResults = discovery_response.passages.length;
+            //var numResults = discovery_response.results.length;
+            console.log("Number of responses - " + numResults);
+            var nResponses = 0;
+            if (numResults > 3) {
+              nResponses = 3;
+            } else {
+              nResponses = numResults;
+            }
 
-          // In the following option we return the top 3 documents from Discovery
-          /* var numResults = discovery_response.results.length;
-          console.log("Number of resutls - " + numResults);
-          var nResponses = 0;
-          if (numResults > 3) {
-            nResponses = 3;
-          } else {
-            nResponses = numResults;
-          }
-          resp.output.text = "";
-          for (var i = 0; i < nResponses; i++) {
-            console.log(i)
-            resp.output.text = resp.output.text + "["+discovery_response.results[i].extracted_metadata.filename+"]<br>" + discovery_response.results[i].text.substring(0,250) + "<br><hr><br><br>";
-          } */
+            resp.output.text = "";
+            for (var i = 0; i < nResponses; i++) {
+              resp.output.text = resp.output.text + "[" + discovery_response.passages[i].document_id + "]<br>" + discovery_response.passages[i].passage_text + "<br><br><hr><br><br>";
+            }
 
-          // In the following option, we return top 3 passages instead of complete documents
-          var numResults = discovery_response.passages.length;
-          console.log("number of responses - " + numResults);
-          var nResponses = 0;
-          if (numResults > 3) {
-            nResponses = 3;
-          } else {
-            nResponses = numResults;
-          }
-          resp.output.text = "";
-          for (var i = 0; i < nResponses; i++) {
-            resp.output.text = resp.output.text + "["+discovery_response.passages[i].document_id+"]<br>" + discovery_response.passages[i].passage_text + "<br><hr><br><br>";
-          } 
+            //New output uses a generic array to capture responses.
+            resp.output.generic.forEach(function (gen) {
+              if (gen.response_type === 'text') 
+                gen.text= resp.output.text;
+            });
 
-          console.log(resp);
-          console.log("here 1");
-
-          return res.json(updateMessage(payload, resp));
-
-        });
+            return res.json(updateMessage(payload, resp));
+          });
+        }
       } else {
-        console.log("here 2");
+        console.log("Output contains a non-discovery action.");
         return res.json(data);
       }
     } else {
-      console.log("here 3");
+      console.log("Output contains no action.");
       return res.json(data);
     }
   });
