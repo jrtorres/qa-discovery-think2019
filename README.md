@@ -133,7 +133,9 @@ Ignore the `DISCOVERY*` entries in the `.env` file for now, we will add those la
 
 ### Start the application
 
-1.  Open a terminal and navigate to the `assistant-with-discovery-lab` directory. **Optionally**, if you do not have node installed and/or prefer to use docker. Use the following command to start a developer container with the bash prompt and then change the directory in the container into the repository.
+1.  Open a terminal and navigate to the `assistant-with-discovery-lab` directory. 
+
+**Optionally**, if you do not have node installed and/or prefer to use docker. Use the following command to start a developer container with the bash prompt and then change the directory in the container into the repository.
 
     ```bash
     docker run -it --rm -v "$(pwd):/repo" -p 3000:3000 timrodocker/mydev bash
@@ -154,7 +156,7 @@ Ignore the `DISCOVERY*` entries in the `.env` file for now, we will add those la
 
 1.  View the application in a browser at `localhost:3000` and interact with the chatbot. Try asking the same questions as you did early such as "play some music" or "checking tire pressure".
 
-    ![Nodejs Application](readme_images/AppTest2.png)  
+    ![Nodejs Application2](readme_images/AppTest2.png)  
     
 # Adding Watson Discovery
 
@@ -335,7 +337,7 @@ cd repo
 
 This time when you ask the question "checking tire pressure". You should see the response from Watson Discovery.
 
-    ![Nodejs Application](readme_images/AppTest.png)  
+![](readme_images/AppTest.png)  
 
 
 ### Running on IBM Cloud
