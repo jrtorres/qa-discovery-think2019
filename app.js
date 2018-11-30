@@ -64,13 +64,17 @@ app.post('/api/message', function (req, res) {
       /////////////////////////////////////////////
       // UNCOMMENT THESE LINES TO CALL DISCOVERY //
       /////////////////////////////////////////////
+     
       // if (outaction.indexOf(call_discovery_flag_name) > -1) {
       //   return callDiscovery(data, res, payload);
       // } else {
         return res.json(data);
       // }
 
+      //////////////////////////////////////////////
+      //////////////////////////////////////////////
 
+      
     } else {
       console.log("Output contains no action.");
       return res.json(data);

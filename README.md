@@ -2,7 +2,7 @@
 
 IBM Watson Assistant service combines machine learning, natural language understanding, and integrated dialog tools to create conversation flows between your apps and your users. In many cases, building a conversational or questions & answer solution can be accomplished primarily using Watson Assistant. However, there will be scenarios where a question & answer solution can not be modeled using only Watson Assistant, either because the domain is large or the questions are complex. In these scenarios, we can combine Watson Assistant and IBM Watson Disovery service to create a solution. Watson Discovery service enables developers to extract insights from large amounts of structured and unstructured data. Allowing users to unlock hidden value in data, to find answers, monitor trends and surface patterns. In these solutions, Watson Assistant provides reasoning strategies that focus on the language and context of the question to answer simple questions, while Watson Discovery provides reasoning strategies that focus on identifying the most appropriate answer for complex questions using the context of the entire corpus.
 
-In this lab, you will import and modify a Watson Assistant skill, Upload content to a Watson Discovery instance, and then integrate the two components using a node.js application.
+In this lab, you will import and modify a Watson Assistant skill, upload content to a Watson Discovery instance, and then integrate the two components using a node.js application.
 
 This application is based on the [Watson Assistant Simple application](https://github.com/watson-developer-cloud/assistant-simple)
 
@@ -90,7 +90,7 @@ Training a chatbot is like training a human agent. You will train the chatbot wi
 
 1. The Watson Assistant we have built is useful in answering many users requests/questions such as turning on the music. However, there are some requests that will be out of scope for Watson Assistant. Try asking "checking tire pressure". 
 
-![Watson Assistant Initial Test](readme_images/WA_TryItOut3.png)
+      ![Watson Assistant Initial Test](readme_images/WA_TryItOut3.png)
 
 We will use Watson Discovery to handle these out-of-scope requests later in this lab.
 
@@ -98,7 +98,7 @@ We will use Watson Discovery to handle these out-of-scope requests later in this
 ## Part 2: Test with the Node.js Application
 ## Run locally
 
-We can run the node.js sample application locally to provide our interface that calls Watson Assistant & Watson Discovery. Before we can start the application, we will need to gather some information to connect to the services. Your running the application you downloaded or cloned locally, so all terminal commands assume you are in the main working directory.
+We can run the node.js sample application locally to provide our interface that calls Watson Assistant & Watson Discovery. Before we can start the application, we will need to gather some information to connect to the services. You are running the application you downloaded or cloned locally, so all terminal commands assume you are in the main working directory.
 
 ### Add IBM Cloud service credentials and IDs to .env file
 
@@ -133,12 +133,6 @@ Ignore the `DISCOVERY*` entries in the `.env` file for now, we will add those la
 
 ### Start the application
 
-1.  Open a terminal and navigate to the `assistant-with-discovery-lab` directory. **Optionally**, if you do not have node installed and/or prefer to use docker. Use the following command to start a developer container with the bash prompt and then change the directory in the container into the repository.
-
-    ```bash
-    docker run -it --rm -v "$(pwd):/repo" -p 3000:3000 timrodocker/mydev bash
-    cd repo
-    ```
 
 1.  Install the applications node dependencies by running the following command:
 
@@ -152,6 +146,16 @@ Ignore the `DISCOVERY*` entries in the `.env` file for now, we will add those la
     npm start
     ```
 
+**Optionally**, if you do not have node installed and/or prefer to use docker. Use the following command to start a developer container with the bash prompt and then change the directory in the container into the repository.
+
+1.  Open a terminal and navigate to the `assistant-with-discovery-lab` directory. 
+
+    ```bash
+    docker run -it --rm -v "$(pwd):/repo" -p 3000:3000 timrodocker/mydev bash
+    cd repo
+    ```
+
+### Test the application
 1.  View the application in a browser at `localhost:3000` and interact with the chatbot. Try asking the same questions as you did early such as "play some music" or "checking tire pressure".
 
     ![Nodejs Application2](readme_images/AppTest2.png)  
@@ -165,7 +169,7 @@ The user's questions/requests may at times be relevant but out of scope for the 
 
 In this section, we will modify our Watson Assistant skill to handle out of scope questions by triggering the orchestrating application to call the Watson Discovery service. For the purpose of this lab, we have already provided an intent with sample questions that are out of scope, so we will just modify the Dialog to create a client action flag.
 
-1.  **Click on the Dialog tab** in the top menu bar.
+1.  **Select the Car_Dashboard_New Skill** and **Click on the Dialog tab** in the top menu bar.
 
 1.  **Click on the 'Add node'** button. This should add a new dialog node near the bottom of the dialog tree and open the dialog node editor. In the dialog node editor, enter a node name (i.e. 'Out of Scope'). For the input triggers, have it set to the intent  **#out_of_scope** (make sure to include the # symbol). 
 
@@ -175,7 +179,7 @@ In this section, we will modify our Watson Assistant skill to handle out of scop
 
     ![Out of Scope Node Enable Multiple Response](readme_images/WA_DialogNodeEnableMR.png)
 
-1.  We are only going to set the client side action (i.e the flag to call Watson Discovery) when Watson Assistant is confident it has received an out of scope question from the user. To accomplish this, we will have one response for questions that are out of scope but are under a specific confidence threshold and another with the action flag when above the confidence threshold. In the dialog node editor, for the first response, under the 'If assistant recognizes' column, enter: `intents[0].confidence<0.51` and under the 'Respond with' column, enter: `Sorry I haven't learned answers to questions like this.`. This is the response the Watson assistant will use if the intent (out_of_scope in this case ) is the top one identified with a confidence less than 50%.  
+1.  We are only going to set the client side action (i.e the flag to call Watson Discovery) when Watson Assistant is confident it has received an out of scope question from the user. To accomplish this, we will have one response for questions that are out of scope but are under a specific confidence threshold and another with the action flag when above the confidence threshold. In the dialog node editor, for the first response, under the 'If assistant recognizes' column, enter: `intents[0].confidence<0.51` and under the "Respond with" column, enter: `Sorry I haven't learned answers to questions like this.`. This is the response the Watson assistant will use if the intent (#out_of_scope in this case ) is the top one identified with a confidence less than 50%.  
 
     ![Out Of Scope Dialog Node Response 1](readme_images/WA_DialogNodeMR1.png)
 
@@ -216,7 +220,7 @@ In this section, we will modify our Watson Assistant skill to handle out of scop
 
     ![Out of Scope Node Final](readme_images/WA_DialogNodeFinal.png)
 
-1.  Use the 'Try it out' panel to test your Watson Assistant chat bot. Click on the **Try it** icon in the top-right corner of the tooling. 
+1.  Use the 'Try it out' panel to test your Watson Assistant chat bot. Click on the **Try it** icon in the top-right corner of the tooling. Try asking "checking tire pressure" for example.
 
     ![Watson Assistant Final Test](readme_images/WA_TryItOut2.png)
 
