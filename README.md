@@ -362,6 +362,10 @@ If the deployment fails, due to a service name not found issue, you could
 * Change the names of your IBM Cloud services to match the names in the manifest.
 * Change the names in the manifest to match the names of your IBM Cloud services.
 
+## [OPTIONAL] Part 5: Call Discovery with Cloud Functions
+
+Another approach to integrate the Watson Discovery service is to use cloud functions allowing the Watson Assistant dialog to call Watson Discovery directly (instead of the client application). As an optional exercise, run the steps in the [Discovery Cloud Functions Readme](DiscoveryCloudFunction.md).
+
 # License
 
 This sample code is licensed under Apache 2.0.  
