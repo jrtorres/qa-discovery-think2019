@@ -1,0 +1,563 @@
+{
+  "name": "IT Support bot",
+  "intents": [
+    {
+      "intent": "ApplicationAccess",
+      "examples": [
+        {
+          "text": "How do I access our Expense system"
+        },
+        {
+          "text": "How to access product inventory"
+        },
+        {
+          "text": "How do I reset a password"
+        },
+        {
+          "text": "I want to access my HR application"
+        },
+        {
+          "text": "What is the status of my application"
+        },
+        {
+          "text": "How do I get access to business applications"
+        },
+        {
+          "text": "How do I book travel"
+        }
+      ]
+    },
+    {
+      "intent": "Goodbye",
+      "examples": [
+        {
+          "text": "take care"
+        },
+        {
+          "text": "ciao"
+        },
+        {
+          "text": "see you later"
+        },
+        {
+          "text": "l will see you later"
+        },
+        {
+          "text": "bye"
+        },
+        {
+          "text": "bye-bye"
+        },
+        {
+          "text": "have a good day"
+        }
+      ]
+    },
+    {
+      "intent": "hello",
+      "examples": [
+        {
+          "text": "howdy"
+        },
+        {
+          "text": "good morning"
+        },
+        {
+          "text": "what's up"
+        },
+        {
+          "text": "hi"
+        },
+        {
+          "text": "how are you"
+        },
+        {
+          "text": "bonjour"
+        }
+      ]
+    },
+    {
+      "intent": "BYOD",
+      "examples": [
+        {
+          "text": "use my own phone"
+        },
+        {
+          "text": "bring my laptop"
+        },
+        {
+          "text": "byod"
+        },
+        {
+          "text": "I want to bring my own device"
+        },
+        {
+          "text": "use my ipad for business"
+        },
+        {
+          "text": "use my phone for business"
+        },
+        {
+          "text": "use my own smartphone for work"
+        },
+        {
+          "text": "bring my tablet"
+        }
+      ]
+    },
+    {
+      "intent": "cloudservice-info",
+      "examples": [
+        {
+          "text": "are there detailed installation instructions for maximo"
+        },
+        {
+          "text": "what is the sla for service xyz"
+        },
+        {
+          "text": "what is the backup strategy"
+        },
+        {
+          "text": "sla"
+        },
+        {
+          "text": "backups"
+        },
+        {
+          "text": "how can i request my data be destroyed"
+        },
+        {
+          "text": "what kind of deployment models are supported by the service"
+        },
+        {
+          "text": "what is the sla for my application"
+        },
+        {
+          "text": "are there any backups kept for the service"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "Supplieronboarding",
+      "examples": [
+        {
+          "text": "on boarding new supplier"
+        },
+        {
+          "text": "supplier due diligence"
+        },
+        {
+          "text": "what is the process to on board new supplier"
+        },
+        {
+          "text": "what is the url of the business process for on boarding supplier?"
+        },
+        {
+          "text": "access to supplier due diligence"
+        },
+        {
+          "text": "I want to board new supplier"
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "entity": "deviceType",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "phone",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "tablet",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "laptop",
+          "synonyms": []
+        }
+      ]
+    },
+    {
+      "entity": "Password",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "password",
+          "synonyms": [
+            "secret code",
+            "access code"
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "HR",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "hr",
+          "synonyms": [
+            "human resources"
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "deviceBrand",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "Motorola",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "IBM",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Dell",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Apple",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Samsung",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Lenovo",
+          "synonyms": []
+        }
+      ]
+    },
+    {
+      "entity": "Expense",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "Expense",
+          "synonyms": [
+            "travel"
+          ]
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "metadata": {
+    "api_version": {
+      "major_version": "v1",
+      "minor_version": "2018-09-20"
+    }
+  },
+  "description": "IT Support bot automates simple IT  processes such as getting status, managing inventory, etc.",
+  "dialog_nodes": [
+    {
+      "type": "event_handler",
+      "output": {},
+      "parent": "node_12_1510549077211",
+      "event_name": "focus",
+      "dialog_node": "handler_16_1510549440919",
+      "previous_sibling": "slot_17_1510549566635"
+    },
+    {
+      "type": "slot",
+      "parent": "node_12_1510549077211",
+      "variable": "$deviceType",
+      "dialog_node": "slot_17_1510549566635",
+      "previous_sibling": "slot_13_1510549429314"
+    },
+    {
+      "type": "slot",
+      "parent": "node_12_1510549077211",
+      "variable": "$deviceBrand",
+      "dialog_node": "slot_13_1510549429314"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "To go to application PWD: access the following URL: https://www.lastpass.com/"
+          ]
+        }
+      },
+      "parent": "node_3_1510540801746",
+      "conditions": "@Password",
+      "dialog_node": "node_6_1510541556370",
+      "previous_sibling": "node_5_1510541206420"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "What application do you want to access: Expense, Password, HR"
+          ]
+        }
+      },
+      "parent": "node_3_1510540801746",
+      "dialog_node": "node_9_1510542886267",
+      "previous_sibling": "node_7_1510542169755"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "To go to the application HR: access the following URL: goo.gl/sivtWz"
+          ]
+        }
+      },
+      "parent": "node_3_1510540801746",
+      "conditions": "@HR",
+      "dialog_node": "node_7_1510542169755",
+      "previous_sibling": "node_6_1510541556370"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "To go to application Expense: access the following URL: https://goo.gl/SmA6hi"
+          ]
+        }
+      },
+      "parent": "node_3_1510540801746",
+      "conditions": "@Expense",
+      "dialog_node": "node_5_1510541206420"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": [
+          "To access the Supplier On Boarding business process use the url: "
+        ],
+        "log_messages": [],
+        "nodes_visited": [
+          "Supplier On Boarding",
+          "Provide URL for Supplier on boarding"
+        ]
+      },
+      "parent": "node_10_1510544275131",
+      "context": {
+        "url": "https://vhost001.bpm.ibmcloud.com/bpm/dev/ProcessPortal/dashboards/SYSRP/RESPONSIVE_WORK",
+        "action": "click",
+        "system": {
+          "dialog_stack": [
+            {
+              "dialog_node": "root"
+            }
+          ],
+          "dialog_turn_counter": 1,
+          "dialog_request_counter": 1
+        },
+        "conversation_id": "Conversation-ut"
+      },
+      "conditions": "",
+      "dialog_node": "node_11_1510544612854"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": "What is the type of your device"
+      },
+      "parent": "slot_17_1510549566635",
+      "event_name": "focus",
+      "dialog_node": "handler_19_1510549566635",
+      "previous_sibling": "handler_18_1510549566635"
+    },
+    {
+      "type": "event_handler",
+      "parent": "slot_17_1510549566635",
+      "context": {
+        "deviceType": "@deviceType"
+      },
+      "conditions": "@deviceType",
+      "event_name": "input",
+      "dialog_node": "handler_18_1510549566635"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "That question is out of scope for this application, take a look at the Watson Assistant Enhanced application to handle questions like these."
+          ],
+          "selection_policy": "sequential"
+        },
+        "action": {
+          "call_discovery": ""
+        }
+      },
+      "parent": "node_1_1550143646962",
+      "metadata": {},
+      "conditions": "intents[0].confidence>0.5",
+      "dialog_node": "node_3_1550143739980",
+      "previous_sibling": "node_2_1550143708715"
+    },
+    {
+      "type": "response_condition",
+      "output": {
+        "text": {
+          "values": [
+            "Sorry I haven't learned answers to questions like this."
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "parent": "node_1_1550143646962",
+      "metadata": {},
+      "conditions": "intents[0].confidence<0.51",
+      "dialog_node": "node_2_1550143708715"
+    },
+    {
+      "type": "event_handler",
+      "output": {
+        "text": "What is the brand of your device"
+      },
+      "parent": "slot_13_1510549429314",
+      "event_name": "focus",
+      "dialog_node": "handler_15_1510549429314",
+      "previous_sibling": "handler_14_1510549429314"
+    },
+    {
+      "type": "event_handler",
+      "parent": "slot_13_1510549429314",
+      "context": {
+        "deviceBrand": "@deviceBrand"
+      },
+      "conditions": "@deviceBrand",
+      "event_name": "input",
+      "dialog_node": "handler_14_1510549429314"
+    },
+    {
+      "type": "standard",
+      "title": "Handle Greetings",
+      "output": {
+        "text": {
+          "values": [
+            "Hi I'm Local IT Support Bot, how can I help you?",
+            "Hi I'm Watson how can I help you?",
+            "You have an IT question?...please ask me"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "conditions": "#hello",
+      "dialog_node": "node_1_1510540370334",
+      "previous_sibling": "Welcome"
+    },
+    {
+      "type": "standard",
+      "title": "Handle application access",
+      "output": {},
+      "metadata": {
+        "_customization": {
+          "mcr": true
+        }
+      },
+      "conditions": "#ApplicationAccess",
+      "dialog_node": "node_3_1510540801746",
+      "previous_sibling": "node_1_1510540370334"
+    },
+    {
+      "type": "standard",
+      "title": "ServiceInfoRetrieval",
+      "output": {},
+      "metadata": {
+        "_customization": {
+          "mcr": true
+        }
+      },
+      "conditions": "#cloudservice-info",
+      "digress_in": "does_not_return",
+      "dialog_node": "node_1_1550143646962",
+      "digress_out": "allow_all",
+      "previous_sibling": "node_12_1510549077211"
+    },
+    {
+      "type": "standard",
+      "title": "Supplier on Boarding",
+      "output": {},
+      "metadata": {
+        "_customization": {
+          "mcr": true
+        }
+      },
+      "conditions": "#Supplieronboarding",
+      "dialog_node": "node_10_1510544275131",
+      "previous_sibling": "node_3_1510540801746"
+    },
+    {
+      "type": "frame",
+      "title": "BYOD",
+      "output": {
+        "text": {
+          "values": [
+            "You want to bring a $deviceType from $deviceBrand, let me check our policies..."
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "context": {
+        "action": "AssessByodPolicy"
+      },
+      "metadata": {
+        "fallback": "leave"
+      },
+      "conditions": "#BYOD",
+      "dialog_node": "node_12_1510549077211",
+      "previous_sibling": "node_10_1510544275131"
+    },
+    {
+      "type": "standard",
+      "title": "Anything else",
+      "output": {
+        "text": {
+          "values": [
+            "I didn't understand. You can try rephrasing.",
+            "Can you reword your statement? I'm not understanding.",
+            "I didn't get your meaning."
+          ],
+          "missing case": true,
+          "selection_policy": "sequential"
+        }
+      },
+      "conditions": "anything_else",
+      "dialog_node": "Anything else",
+      "previous_sibling": "node_1_1550143646962"
+    },
+    {
+      "type": "standard",
+      "title": "Welcome",
+      "output": {
+        "text": {
+          "values": [
+            "Hello. How can I help you?"
+          ],
+          "selection_policy": "sequential"
+        }
+      },
+      "conditions": "welcome",
+      "dialog_node": "Welcome"
+    }
+  ],
+  "workspace_id": "b1a44539-d35d-48b3-88b8-308f5a5176a7",
+  "counterexamples": [],
+  "learning_opt_out": false,
+  "status": "Available"
+}

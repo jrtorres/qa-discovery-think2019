@@ -59,21 +59,12 @@ app.post('/api/message', function (req, res) {
 
     if (data.output && data.output.action) {
       var outaction = JSON.stringify(data.output.action);
-
-
-      /////////////////////////////////////////////
-      // UNCOMMENT THESE LINES TO CALL DISCOVERY //
-      /////////////////////////////////////////////
      
-      // if (outaction.indexOf(call_discovery_flag_name) > -1) {
-      //   return callDiscovery(data, res, payload);
-      // } else {
+      if (outaction.indexOf(call_discovery_flag_name) > -1) {
+         return callDiscovery(data, res, payload);
+      } else {
         return res.json(data);
-      // }
-
-      //////////////////////////////////////////////
-      //////////////////////////////////////////////
-
+      }
       
     } else {
       console.log("Output contains no action.");
@@ -120,8 +111,11 @@ function callDiscovery(data, res, payload) {
 
       var resp = data;
 
-      // In the following option, we return top 3 passages instead of complete documents
-      var numResults = discovery_response.passages.length;
+      // In the following option, we return top 3 passages / documents
+
+      //var numResults = discovery_response.passages.length;
+      var numResults = discovery_response.results.length;
+
       console.log("Number of responses - " + numResults);
       var nResponses = 0;
       if (numResults > 3) {
@@ -132,7 +126,8 @@ function callDiscovery(data, res, payload) {
 
       resp.output.text = "";
       for (var i = 0; i < nResponses; i++) {
-        resp.output.text = resp.output.text + "[" + discovery_response.passages[i].document_id + "]<br>" + discovery_response.passages[i].passage_text + "<br><br><hr><br><br>";
+        //resp.output.text = resp.output.text + "[" + discovery_response.passages[i].document_id + "]<br>" + discovery_response.passages[i].passage_text + "<br><br><hr><br><br>";
+        resp.output.text = resp.output.text + "[" + discovery_response.results[i].id + "]<br>" + discovery_response.results[i].text + "<br><br><hr><br><br>";
       }
 
       //New output uses a generic array to capture responses.
